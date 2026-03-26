@@ -11,11 +11,17 @@
     <h1>Inventuurisüsteem</h1>
 </header>
 
+<main>
+
 <section class="login">
     <h2>Sisselogimine</h2>
-    <form>
-        <input type="email" placeholder="Email" required>
-        <input type="password" placeholder="Parool" required>
+    <form action="/login" method="POST">
+        <label>Email</label>
+        <input type="email" name="email" placeholder="Email" required>
+
+        <label>Parool</label>
+        <input type="password" name="password" placeholder="Parool" required>
+
         <button type="submit">Logi sisse</button>
     </form>
 </section>
@@ -40,8 +46,8 @@
                 <td>Kasutuses</td>
                 <td>Hea</td>
                 <td>
-                    <button class="use">Kasuta</button>
-                    <button class="delete">Kustuta</button>
+                    <button type="button" class="use">Kasuta</button>
+                    <button type="button" class="delete">Kustuta</button>
                 </td>
             </tr>
 
@@ -51,8 +57,8 @@
                 <td>Vaba</td>
                 <td>Rahuldav</td>
                 <td>
-                    <button class="use">Kasuta</button>
-                    <button class="delete">Kustuta</button>
+                    <button type="button" class="use">Kasuta</button>
+                    <button type="button" class="delete">Kustuta</button>
                 </td>
             </tr>
         </tbody>
@@ -60,16 +66,18 @@
 
     <div class="add-device">
         <h3>Lisa uus seade (Admin)</h3>
-        <form>
-            <input type="text" placeholder="Nimi">
-            <input type="text" placeholder="Seerianumber">
-            <input type="date">
+        <form action="/devices" method="POST">
+            <input type="text" name="name" placeholder="Nimi" required>
+            <input type="text" name="serial" placeholder="Seerianumber" required>
+            <input type="date" name="date" required>
             <button type="submit">Lisa</button>
         </form>
     </div>
 
 </section>
 
-<script src="script.js"></script>
+</main>
+
+<script src="server.js"></script>
 </body>
 </html>

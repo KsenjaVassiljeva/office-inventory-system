@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventuurisüsteem</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header>
+    <h1>Inventuurisüsteem</h1>
+</header>
+
+<section class="login">
+    <h2>Sisselogimine</h2>
+    <form>
+        <input type="email" placeholder="Email" required>
+        <input type="password" placeholder="Parool" required>
+        <button type="submit">Logi sisse</button>
+    </form>
+</section>
+
+<section class="devices">
+    <h2>Seadmete nimekiri</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nimi</th>
+                <th>Seerianumber</th>
+                <th>Staatus</th>
+                <th>Seisukord</th>
+                <th>Tegevus</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Sülearvuti</td>
+                <td>ABC123</td>
+                <td>Kasutuses</td>
+                <td>Hea</td>
+                <td>
+                    <button class="use">Kasuta</button>
+                    <button class="delete">Kustuta</button>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Monitor</td>
+                <td>XYZ789</td>
+                <td>Vaba</td>
+                <td>Rahuldav</td>
+                <td>
+                    <button class="use">Kasuta</button>
+                    <button class="delete">Kustuta</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="add-device">
+        <h3>Lisa uus seade (Admin)</h3>
+        <form>
+            <input type="text" placeholder="Nimi">
+            <input type="text" placeholder="Seerianumber">
+            <input type="date">
+            <button type="submit">Lisa</button>
+        </form>
+    </div>
+
+</section>
+
+</body>
+</html>

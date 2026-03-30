@@ -1,6 +1,11 @@
-const express = require("express");
-const path = require("path");
-const PocketBase = require("pocketbase");
+// server.js
+import express from "express";
+import path from "path";
+import PocketBase from "pocketbase";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -26,9 +31,9 @@ app.get('/api/users', async (req, res) => {
         const users = await pb.collection('users').getFullList({
             sort: '-created'
         });
-
         res.json(users);
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -39,6 +44,7 @@ app.get('/api/users/:id', async (req, res) => {
         const user = await pb.collection('users').getOne(req.params.id);
         res.json(user);
     } catch (error) {
+        console.error(error);
         res.status(404).json({ error: "User not found" });
     }
 });

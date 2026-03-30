@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-const PocketBase = require("pocketbase/cjs");
+const PocketBase = require("pocketbase");
 
 const app = express();
 

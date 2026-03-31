@@ -7,107 +7,115 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const pb = new PocketBase('http://pocketbase-nymicyupwjww3n88j2wrpu9s.176.112.158.15.sslip.io');
 
 const PORT = process.env.PORT || 3000;
 const NIMI = process.env.MY_NAME || "Tundmatu nimi (Viga!)";
 
+const pb = new PocketBase(
+  "http://pocketbase-nymicyupwjww3n88j2wrpu9s.176.112.158.15.sslip.io"
+);
+
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
 
 const authMiddleware = async (req, res, next) => {
-    const authHeader = req.headers.authorization;
+  const authHeader = req.headers.authorization;
 
-    if (!authHeader) {
-        return res.status(401).json({ error: "Token puudub" });
-    }
+  if (!authHeader) {
+    return res.status(401).json({ error: "Token puudub" });
+  }
 
-    const token = authHeader.split(' ')[1];
+  const token = authHeader.split(" ")[1];
 
-    try {
-        pb.authStore.save(token, null);
+  try {
+    const localPb = new PocketBase(pb.baseUrl);
 
-        await pb.collection('users').authRefresh();
+    localPb.authStore.save(token, null);
+    await localPb.collection("users").authRefresh();
 
-        req.user = pb.authStore.model;
+    req.user = localPb.authStore.model;
+    req.pb = localPb;
 
-        next();
-    } catch (err) {
-        return res.status(401).json({ error: "Vale või aegunud token" });
-    }
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: "Vale või aegunud token" });
+  }
 };
 
-app.get('/api/info', (req, res) => {
-    res.status(200).json({
-        misioon: "Iseseisev deplomine edukas",
-        meeskond: NIMI,
-        aeg: new Date().toISOString()
+
+app.get("/api/info", (req, res) => {
+  res.json({
+    misioon: "Iseseisev deplomine edukas",
+    meeskond: NIMI,
+    aeg: new Date().toISOString(),
+  });
+});
+
+
+app.post("/api/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const authData = await pb
+      .collection("users")
+      .authWithPassword(email, password);
+
+    res.json({
+      token: authData.token,
+      user: authData.record,
     });
+  } catch (error) {
+    res.status(401).json({ error: "Vale email või parool" });
+  }
 });
 
 
-app.post('/api/login', async (req, res) => {
-    const { email, password } = req.body;
-
-    try {
-        const authData = await pb.collection('users')
-            .authWithPassword(email, password);
-
-        res.json({
-            token: authData.token,
-            user: authData.record
-        });
-
-    } catch (error) {
-        res.status(401).json({ error: "Vale email või parool" });
-    }
+app.post("/api/register", async (req, res) => {
+  try {
+    const user = await pb.collection("users").create(req.body);
+    res.json(user);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 });
 
 
-app.post('/api/register', async (req, res) => {
-    try {
-        const user = await pb.collection('users').create(req.body);
-        res.json(user);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
+app.post("/api/logout", (req, res) => {
+  res.json({ message: "Välja logitud" });
 });
 
 
-app.post('/api/logout', (req, res) => {
-    pb.authStore.clear();
-    res.json({ message: "Välja logitud" });
+app.get("/api/users", authMiddleware, async (req, res) => {
+  try {
+    const users = await req.pb.collection("users").getFullList({
+      sort: "-created",
+    });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 
-app.get('/api/users', authMiddleware, async (req, res) => {
-    try {
-        const users = await pb.collection('users').getFullList({
-            sort: '-created'
-        });
-        res.json(users);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+app.get("/api/users/:id", authMiddleware, async (req, res) => {
+  try {
+    const user = await req.pb
+      .collection("users")
+      .getOne(req.params.id);
+
+    res.json(user);
+  } catch (error) {
+    res.status(404).json({ error: "User not found" });
+  }
 });
 
 
-app.get('/api/users/:id', authMiddleware, async (req, res) => {
-    try {
-        const user = await pb.collection('users').getOne(req.params.id);
-        res.json(user);
-    } catch (error) {
-        res.status(404).json({ error: "User not found" });
-    }
+app.get("/api/me", authMiddleware, (req, res) => {
+  res.json(req.user);
 });
 
 
-app.get('/api/me', authMiddleware, (req, res) => {
-    res.json(req.user);
-});
-
-
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server töötab pordil: ${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server töötab pordil: ${PORT}`);
 });

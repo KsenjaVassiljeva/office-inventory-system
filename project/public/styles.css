@@ -87,3 +87,14 @@ button {
 .add-device input {
     padding: 8px;
 }
+
+.description {
+    font-size: 1.1em;
+    color: #555;
+    margin: 10px 0;
+}
+
+.header-image {
+    display: block;
+    margin: 10px 0;
+}

@@ -13,11 +13,31 @@ const PORT = process.env.PORT || 3000;
 const NIMI = process.env.MY_NAME || "Tundmatu nimi (Viga!)";
 
 app.use(express.json());
-
-// ✅ абсолютный путь (важно!)
 app.use(express.static(path.join(__dirname, 'public')));
 
-/* API INFO */
+
+const authMiddleware = async (req, res, next) => {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+        return res.status(401).json({ error: "Token puudub" });
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    try {
+        pb.authStore.save(token, null);
+
+        await pb.collection('users').authRefresh();
+
+        req.user = pb.authStore.model;
+
+        next();
+    } catch (err) {
+        return res.status(401).json({ error: "Vale või aegunud token" });
+    }
+};
+
 app.get('/api/info', (req, res) => {
     res.status(200).json({
         misioon: "Iseseisev deplomine edukas",
@@ -26,8 +46,42 @@ app.get('/api/info', (req, res) => {
     });
 });
 
-/* GET USERS */
-app.get('/api/users', async (req, res) => {
+
+app.post('/api/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const authData = await pb.collection('users')
+            .authWithPassword(email, password);
+
+        res.json({
+            token: authData.token,
+            user: authData.record
+        });
+
+    } catch (error) {
+        res.status(401).json({ error: "Vale email või parool" });
+    }
+});
+
+
+app.post('/api/register', async (req, res) => {
+    try {
+        const user = await pb.collection('users').create(req.body);
+        res.json(user);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+
+app.post('/api/logout', (req, res) => {
+    pb.authStore.clear();
+    res.json({ message: "Välja logitud" });
+});
+
+
+app.get('/api/users', authMiddleware, async (req, res) => {
     try {
         const users = await pb.collection('users').getFullList({
             sort: '-created'
@@ -38,8 +92,8 @@ app.get('/api/users', async (req, res) => {
     }
 });
 
-/* GET ONE USER */
-app.get('/api/users/:id', async (req, res) => {
+
+app.get('/api/users/:id', authMiddleware, async (req, res) => {
     try {
         const user = await pb.collection('users').getOne(req.params.id);
         res.json(user);
@@ -48,7 +102,12 @@ app.get('/api/users/:id', async (req, res) => {
     }
 });
 
-/* START SERVER */
+
+app.get('/api/me', authMiddleware, (req, res) => {
+    res.json(req.user);
+});
+
+
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server töötab pordil: ${PORT}`);
 });

@@ -53,7 +53,7 @@ app.get("/api/info", (req, res) => {
 
 
 // LOGIN
-app.post("/api/login", async (req, res) => {
+app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -72,7 +72,7 @@ app.post("/api/login", async (req, res) => {
 
 
 // REGISTER
-app.post("/api/register", async (req, res) => {
+app.post("/register", async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -89,7 +89,7 @@ app.post("/api/register", async (req, res) => {
 
 
 // USERS (protected)
-app.get("/api/users", authMiddleware, async (req, res) => {
+app.get("/users", authMiddleware, async (req, res) => {
   try {
     const users = await req.pb.collection("users").getFullList({
       sort: "-created",
@@ -103,7 +103,7 @@ app.get("/api/users", authMiddleware, async (req, res) => {
 
 
 // USER BY ID
-app.get("/api/users/:id", authMiddleware, async (req, res) => {
+app.get("/users/:id", authMiddleware, async (req, res) => {
   try {
     const user = await req.pb
       .collection("users")

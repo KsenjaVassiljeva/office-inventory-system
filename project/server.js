@@ -9,9 +9,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 const PORT = process.env.PORT || 3000;
-const PB_URL =
-  process.env.PB_URL ||
-  "http://pocketbase-nymicyupwjww3n88j2wrpu9s.176.112.158.15.sslip.io";
+const PB_URL = process.env.PB_URL || "http://pocketbase-nymicyupwjww3n88j2wrpu9s.176.112.158.15.sslip.io";
 
 const pb = new PocketBase(PB_URL);
 
@@ -30,10 +28,8 @@ const authMiddleware = (req, res, next) => {
 
   try {
     const localPb = new PocketBase(PB_URL);
-
     localPb.authStore.save(token, null);
 
-    // просто проверяем токен без refresh
     if (!localPb.authStore.isValid) {
       return res.status(401).json({ error: "Invalid token" });
     }
@@ -48,8 +44,6 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-
-// INFO
 app.get("/api/info", (req, res) => {
   res.json({
     message: "Server working",
@@ -70,10 +64,10 @@ app.post("/login", async (req, res) => {
       user: authData.record,
     });
   } catch (error) {
+    console.error("Login error:", error);
     res.status(401).json({ error: "Login failed" });
   }
 });
-
 
 app.post("/register", async (req, res) => {
   const { email, password, passwordConfirm } = req.body;
@@ -87,6 +81,7 @@ app.post("/register", async (req, res) => {
 
     res.json(user);
   } catch (error) {
+    console.error("Register error:", error);
     res.status(400).json({ error: error.message });
   }
 });
@@ -99,22 +94,23 @@ app.get("/users", authMiddleware, async (req, res) => {
 
     res.json(users);
   } catch (error) {
+    console.error("Get users error:", error);
     res.status(500).json({ error: error.message });
   }
 });
-
 
 app.get("/users/:id", authMiddleware, async (req, res) => {
   try {
     const user = await req.pb.collection("users").getOne(req.params.id);
     res.json(user);
   } catch (error) {
+    console.error("Get user error:", error);
     res.status(404).json({ error: "Not found" });
   }
 });
 
 
-
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`PocketBase URL: ${PB_URL}`);
 });

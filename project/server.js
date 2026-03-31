@@ -132,19 +132,30 @@ app.get("/api/users/:id", authMiddleware, async (req, res) => {
 });
 
 
-app.get("/api/me", authMiddleware, (req, res) => {
-  res.json(req.user);
-});
-
 fetch("/api/login", {
   method: "POST",
   headers: {
     "Content-Type": "application/json"
   },
   body: JSON.stringify({
-    email: "test@test.com",
+    email: "test@example.com",
     password: "123456"
   })
+})
+.then(res => res.json())
+.then(data => {
+  console.log("LOGIN SUCCESS:", data);
+
+  // сохранить токен
+  localStorage.setItem("token", data.token);
+});
+
+const token = localStorage.getItem("token");
+
+fetch("/api/users", {
+  headers: {
+    Authorization: `Bearer ${token}`
+  }
 })
 .then(res => res.json())
 .then(data => console.log(data));

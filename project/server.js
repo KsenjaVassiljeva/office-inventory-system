@@ -138,8 +138,8 @@ fetch("/api/login", {
     "Content-Type": "application/json"
   },
   body: JSON.stringify({
-    email: "test@example.com",
-    password: "123456"
+    email: "testuser2@gmail.com",
+    password: "12345678"
   })
 })
 .then(res => res.json())

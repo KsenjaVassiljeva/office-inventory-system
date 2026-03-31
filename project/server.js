@@ -9,8 +9,6 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 const PORT = process.env.PORT || 3000;
-const NIMI = process.env.MY_NAME || "Tundmatu nimi (Viga!)";
-
 const PB_URL = "http://pocketbase-nymicyupwjww3n88j2wrpu9s.176.112.158.15.sslip.io";
 
 const pb = new PocketBase(PB_URL);
@@ -19,11 +17,12 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 
+// AUTH MIDDLEWARE
 const authMiddleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "Token puudub või vale formaat" });
+  if (!authHeader?.startsWith("Bearer ")) {
+    return res.status(401).json({ error: "No token" });
   }
 
   const token = authHeader.split(" ")[1];
@@ -39,26 +38,23 @@ const authMiddleware = async (req, res, next) => {
 
     next();
   } catch (err) {
-    return res.status(401).json({ error: "Vale või aegunud token" });
+    return res.status(401).json({ error: "Invalid token" });
   }
 };
 
 
+// INFO
 app.get("/api/info", (req, res) => {
   res.json({
-    misioon: "Iseseisev deplomine edukas",
-    meeskond: NIMI,
-    aeg: new Date().toISOString(),
+    message: "Server working",
+    time: new Date().toISOString(),
   });
 });
 
 
+// LOGIN
 app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ error: "Email ja parool on kohustuslikud" });
-  }
 
   try {
     const authData = await pb
@@ -69,19 +65,15 @@ app.post("/api/login", async (req, res) => {
       token: authData.token,
       user: authData.record,
     });
-
   } catch (error) {
-    res.status(401).json({ error: "Vale email või parool" });
+    res.status(401).json({ error: "Login failed" });
   }
 });
 
 
+// REGISTER
 app.post("/api/register", async (req, res) => {
   const { email, password, passwordConfirm } = req.body;
-
-  if (!email || !password || !passwordConfirm) {
-    return res.status(400).json({ error: "Puuduvad väljad" });
-  }
 
   try {
     const user = await pb.collection("users").create({
@@ -91,19 +83,13 @@ app.post("/api/register", async (req, res) => {
     });
 
     res.json(user);
-
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
 
 
-
-app.post("/api/logout", (req, res) => {
-  res.json({ message: "Välja logitud" });
-});
-
-
+// USERS (protected)
 app.get("/api/users", authMiddleware, async (req, res) => {
   try {
     const users = await req.pb.collection("users").getFullList({
@@ -111,13 +97,13 @@ app.get("/api/users", authMiddleware, async (req, res) => {
     });
 
     res.json(users);
-
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
 
+// USER BY ID
 app.get("/api/users/:id", authMiddleware, async (req, res) => {
   try {
     const user = await req.pb
@@ -125,41 +111,12 @@ app.get("/api/users/:id", authMiddleware, async (req, res) => {
       .getOne(req.params.id);
 
     res.json(user);
-
-  } catch (error) {
-    res.status(404).json({ error: "User not found" });
+  } catch {
+    res.status(404).json({ error: "Not found" });
   }
 });
 
-
-fetch("/api/login", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    email: "testuser2@gmail.com",
-    password: "12345678"
-  })
-})
-.then(res => res.json())
-.then(data => {
-  console.log("LOGIN SUCCESS:", data);
-
-  // сохранить токен
-  localStorage.setItem("token", data.token);
-});
-
-const token = localStorage.getItem("token");
-
-fetch("/api/users", {
-  headers: {
-    Authorization: `Bearer ${token}`
-  }
-})
-.then(res => res.json())
-.then(data => console.log(data));
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server töötab pordil: ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

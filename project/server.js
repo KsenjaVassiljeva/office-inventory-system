@@ -136,6 +136,18 @@ app.get("/api/me", authMiddleware, (req, res) => {
   res.json(req.user);
 });
 
+fetch("/api/login", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    email: "test@test.com",
+    password: "123456"
+  })
+})
+.then(res => res.json())
+.then(data => console.log(data));
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server töötab pordil: ${PORT}`);

@@ -10,7 +10,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const PB_URL =
   process.env.PB_URL ||
-  "http://pocketbase-nymicyupwjww3n88j2wrpu9s:8090";
+  "http://pocketbase-nymicyupwjww3n88j2wrpu9s.176.112.158.15.sslip.io";
 
 // Shared PocketBase instance for public operations (register, login)
 const pb = new PocketBase(PB_URL);

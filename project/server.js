@@ -73,13 +73,12 @@ app.post("/api/login", async (req, res) => {
 
 // REGISTER
 app.post("/api/register", async (req, res) => {
-  const { email, password, passwordConfirm } = req.body;
+  const { email, password } = req.body;
 
   try {
     const user = await pb.collection("users").create({
       email,
-      password,
-      passwordConfirm,
+      password
     });
 
     res.json(user);

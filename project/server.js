@@ -109,6 +109,16 @@ app.get("/users/:id", authMiddleware, async (req, res) => {
   }
 });
 
+pb.collection("users").getList(1, 1).then(() => {
+  console.log("✅ PocketBase connected!");
+}).catch((err) => {
+  console.error("❌ PocketBase connection error:", err.message);
+});
+```
+
+**4. Проверь какой именно роут даёт 500** — запрос на `/api/info` должен работать всегда без PocketBase:
+```
+
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);

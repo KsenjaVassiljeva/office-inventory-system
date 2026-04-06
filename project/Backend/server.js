@@ -1,30 +1,24 @@
-// Import Section
-const cors = require("cors");
-const express = require("express");
-const path = require("path");
+import express from "express";
+import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// App use section
 app.use(cors());
 app.use(express.json());
-
 
 app.use(express.static(path.resolve(__dirname, "../Frontend")));
 app.use(express.static(path.resolve(__dirname, "../Frontend/scripts")));
 
-// Главная страница
 app.get("/", (req, res) => {
-    try {
-        res.sendFile(path.resolve(__dirname, "../Frontend/mainPage/index.html"));
-    } catch (e) {
-        console.error(e);
-        res.status(500).json({ error: e.message });
-    }
+    res.sendFile(path.resolve(__dirname, "../Frontend/mainPage/index.html"));
 });
 
-// Listener
 app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server is running on port ${PORT}`);
 });

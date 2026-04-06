@@ -25,16 +25,6 @@ Projekt kasutab järgmisi tehnoloogiaid:
 - Vanilla JavaScript hoiab projekti kerge ja arusaadava
 - Sobib hästi väikesele projektile ja õppimiseks
 
----
-
-## Lingid töötavatele teenustele
-
-- Frontend URL: http://localhost:3000  
-- PocketBase Admin URL: http://127.0.0.1:8090/_/
-
-*(Muuda need lingid, kui deployd projekti internetti)*
-
----
 
 ## Paigaldusjuhend
 

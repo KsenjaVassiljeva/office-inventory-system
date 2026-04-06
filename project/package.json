@@ -1,13 +1,13 @@
 {
+  "name": "project",
+  "version": "1.0.0",
+  "main": "Backend/server.js",
+  "scripts": {
+    "start": "Backend/server.js"
+  },
   "dependencies": {
     "express": "^5.2.1",
     "pocketbase": "^0.26.8"
-  },
-  "name": "project",
-  "version": "1.0.0",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
   },
   "keywords": [],
   "author": "",

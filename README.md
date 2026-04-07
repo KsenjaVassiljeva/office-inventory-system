@@ -40,8 +40,6 @@ npm install
 
 node app.js
 
-
-
 ## Meeskonnaliikmed ja töö jaotus
 
 Ksenja Vassijeva

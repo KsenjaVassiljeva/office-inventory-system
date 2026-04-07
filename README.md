@@ -40,7 +40,6 @@ npm install
 
 node app.js
 
-http://localhost:3000 
 
 
 ## Meeskonnaliikmed ja töö jaotus

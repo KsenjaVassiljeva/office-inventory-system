@@ -1,0 +1,92 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #333;
+}
+
+/* Layout */
+.container {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+/* Header */
+.header {
+    text-align: center;
+    color: white;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    margin-bottom: 10px;
+}
+
+.description {
+    opacity: 0.9;
+}
+
+/* Card */
+.card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.card h2 {
+    margin-top: 0;
+}
+
+/* User list */
+#users {
+    list-style: none;
+    padding: 0;
+}
+
+#users li {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    transition: 0.2s;
+}
+
+#users li:hover {
+    background-color: #f0f0f0;
+}
+
+/* Buttons */
+.actions {
+    margin-top: 20px;
+    text-align: center;
+}
+
+button {
+    padding: 12px 25px;
+    margin: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Donate button */
+.donate-btn {
+    background: #27ae60;
+    color: white;
+}
+
+.donate-btn:hover {
+    background: #1e8449;
+}
+
+/* Logout button */
+.logout-btn {
+    background: #e74c3c;
+    color: white;
+}
+
+.logout-btn:hover {
+    background: #c0392b;
+}

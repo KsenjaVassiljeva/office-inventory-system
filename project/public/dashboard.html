@@ -1,17 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
 
-  <h1>Members</h1>
+  <div class="container">
+    <header class="header">
+      <h1>👥 Members Dashboard</h1>
+      <p class="description">Manage users and support the platform</p>
+    </header>
 
-  <ul id="users"></ul>
+    <main class="content">
+      <div class="card">
+        <h2>Members List</h2>
+        <ul id="users"></ul>
+      </div>
 
-  <button onclick="donate()">Donate via Stripe</button>
-
-  <button onclick="logout()">Logout</button>
+      <div class="actions">
+        <button class="donate-btn" onclick="donate()">💖 Donate via Stripe</button>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+      </div>
+    </main>
+  </div>
 
   <script src="dashboard.js"></script>
 </body>
